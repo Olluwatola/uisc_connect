@@ -2,7 +2,8 @@ import express, { Router } from "express";
 import globalErrorHandler from "../handlers/globalErrorHandler";
 import AppError from "../utils/appError";
 import authenticate from "../middlewares/authenticate";
-import UserRoutes from "./userRoutes";
+import userRoutes from "./userRoutes";
+import authRoutes from "./authRoutes";
 const router: Router = Router();
 
 //routes go here
@@ -10,8 +11,8 @@ const router: Router = Router();
 
 router.use(express.json());
 
-// router.use("/auth", AuthRoutes);
-router.use("/users", authenticate, UserRoutes);
+router.use("/auth", authRoutes);
+router.use("/users", authenticate, userRoutes);
 
 router.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

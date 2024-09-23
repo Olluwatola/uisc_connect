@@ -1,4 +1,25 @@
-import e, { Response } from "express";
+import e, { Response, Request } from "express";
+import { environment, jwtCookieExpiresAfter } from "../utils/constants";
+
+export const sendCookie = (
+  req: Request,
+  res: Response,
+  token: string,
+  message?: string
+) => {
+  res
+    .status(201)
+    .cookie("uisc_jwt_token", token, {
+      expires: new Date(Date.now() + parseInt(jwtCookieExpiresAfter as string)),
+      httpOnly: true,
+      secure: req.secure || req.headers["x-forwarded-proto"] === "https",
+    })
+    .json({
+      success: true,
+      token: environment === "development" ? token : undefined,
+      message: message || "authorized",
+    });
+};
 
 export const sendResponse = (
   res: Response,

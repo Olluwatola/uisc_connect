@@ -8,6 +8,10 @@ import {
   nodemailerFromEmail,
   jwtSecret,
   jwtIssuer,
+  jwtCookieExpiresAfter,
+  forgotPasswordJwtCookieExpiresAfter,
+  forgotPasswordJwtIssuer,
+  forgotPasswordJwtSecret,
 } from "./../utils/constants";
 import jwt from "jsonwebtoken";
 import path from "path";
@@ -19,20 +23,27 @@ import {
   MulticastMessage,
 } from "firebase-admin/lib/messaging/messaging-api";
 import { getMessaging } from "firebase-admin/messaging";
+import { IUser } from "../models/User";
 
 export const generateUserJWT = (
-  //user: UserDocument,
-  duration?: string
+  user: IUser,
+  duration?: number | null,
+  isForgotPassword?: boolean
 ): string => {
   return jwt.sign(
     {
-      //   id: user.id,
-      //   user_type: user.type,
+      id: user.id,
+      user_role: user.role,
     },
-    jwtSecret as string,
+    isForgotPassword === true
+      ? (forgotPasswordJwtSecret as string)
+      : (jwtSecret as string),
     {
-      issuer: jwtIssuer,
-      expiresIn: duration || "1000 days",
+      issuer: isForgotPassword === true ? forgotPasswordJwtIssuer : jwtIssuer,
+      expiresIn:
+        isForgotPassword === true
+          ? duration || parseInt(forgotPasswordJwtCookieExpiresAfter as string)
+          : duration || parseInt(jwtCookieExpiresAfter as string),
     }
   );
 };

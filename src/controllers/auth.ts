@@ -173,7 +173,7 @@ export const register = catchAsync(
     // Check if user already exists
     const existingUser = await User.findOne(
       { $or: [{ emailAddress }, { matricNo }] },
-      ["email", "matricNo"]
+      ["emailAddress", "matricNo"]
     );
     if (existingUser) {
       if (
@@ -185,7 +185,7 @@ export const register = catchAsync(
       } else if (existingUser.emailAddress === emailAddress) {
         send400(res, "email already taken");
         return;
-      } else if (existingUser.matricNo === matricNo) {
+      } else if (existingUser.matricNo === matricNo && matricNo !== undefined) {
         send400(res, "matric number already taken");
         return;
       }

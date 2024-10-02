@@ -1,10 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { environment } from "../utils/constants";
-import {IAppError} from '../interfaces/error'
+import { IAppError } from "../interfaces/error";
 import logger from "../configs/logger";
-import { send401, send500, send422, send500dev } from "./responseHandlers";
-
-
+import {
+  send401,
+  send500,
+  send422,
+  send500dev,
+  send404,
+} from "./responseHandlers";
 
 const handleJWTError = (res: Response) =>
   send401(res, "Invalid token. Please log in again!");
@@ -14,6 +18,9 @@ const handleJWTExpiredError = (res: Response) =>
 
 const handleDuplicateEmailError = (res: Response) =>
   send422(res, "an account with the email inputted exists already");
+
+const handle404 = (res: Response) =>
+  send404(res, "cannot find resource requested on this server");
 
 const sendUnhandledErrorDev = (
   error: IAppError,
@@ -58,6 +65,10 @@ export default (
     return;
   }
 
+  if (error.statusCode === 404) {
+    handle404(res);
+    return;
+  }
   error.statusCode = 500;
   error.status = "error";
   if (environment === "development") {

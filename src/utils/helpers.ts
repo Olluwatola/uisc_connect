@@ -12,11 +12,12 @@ import {
   forgotPasswordJwtCookieExpiresAfter,
   forgotPasswordJwtIssuer,
   forgotPasswordJwtSecret,
+  productName,
 } from "./../utils/constants";
 import jwt from "jsonwebtoken";
 import path from "path";
 import ejs from "ejs";
-import FCM from "../configs/pushNotifications";
+//import FCM from "../configs/pushNotifications";
 import mongoose from "mongoose";
 import {
   Message,
@@ -24,6 +25,16 @@ import {
 } from "firebase-admin/lib/messaging/messaging-api";
 import { getMessaging } from "firebase-admin/messaging";
 import { IUser } from "../models/User";
+
+export function combineDateAndTime(dateString: string, timeString: string) {
+  // Combine date and time into an ISO 8601 format string
+  const dateTimeString = `${dateString}T${timeString}`;
+
+  // Create and return a Date object
+  const dateTime = new Date(dateTimeString);
+
+  return dateTime;
+}
 
 export const generateUserJWT = (
   user: IUser,
@@ -90,20 +101,41 @@ export const sendEmailUsingTemplate = async (
 };
 
 export const uploadMediaToCloudinary = async (
-  category: string,
+  category: "event" | "eventThumbnail" | "resume",
   userIdOrEntity: string,
-  files: Express.Multer.File[]
+  files: Express.Multer.File[],
+  entityType?: "userFiles" | "communityFiles" | "eventFiles",
+  organization?: string
 ): Promise<string[]> => {
   const uploadPromises = files.map(async (file) => {
     // Build a safe public ID
-    const safePublicId = userIdOrEntity + file.filename + Date.now();
 
+    //by default ,we set the safe public id to be easily overwritable
+    let safePublicId = userIdOrEntity;
+
+    //below sets the safepublicid to be unique using Date.now()
+    if (category === "event") {
+      safePublicId = userIdOrEntity + file.filename + Date.now();
+    }
     // Determine the resource type (image or video)
-    const resourceType = file.mimetype.startsWith("video/") ? "video" : "image";
+    const resourceType = file.mimetype.startsWith("video/")
+      ? "video"
+      : file.mimetype.startsWith("image/")
+      ? "image"
+      : "auto";
 
     // Build upload options
     let options: CloudinaryUploadOptions = {
-      folder: category.trim() + "/" + userIdOrEntity.trim(),
+      folder:
+        (productName as string) +
+        "/" +
+        (productName as string) +
+        "/" +
+        entityType +
+        "/" +
+        userIdOrEntity.trim() +
+        "/" +
+        category.trim(),
       public_id: safePublicId,
       use_filename: true,
       unique_filename: false,
@@ -111,11 +143,11 @@ export const uploadMediaToCloudinary = async (
       resource_type: resourceType, // Set the resource type
     };
 
-    if (category === "profileImageThumbnails") {
+    if (category === "eventThumbnail") {
       options.transformation = [
         {
-          width: 150,
-          height: 150,
+          width: 750,
+          height: 750,
           crop: "thumb",
         },
       ];
@@ -164,7 +196,7 @@ export const sendNotification = async (
   //   if (user.hasPushNotifications === false || !sendPushNotification) {
   //     return;
   //   }
-  await FCM.send(message);
+  //await FCM.send(message);
   return;
 };
 

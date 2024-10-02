@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { handleImageUpload } from "../configs/multer";
 import { body } from "express-validator";
-import validateId from "../middleware/validateId";
+import validateId from "../middlewares/validateId";
 import validate from "../middlewares/validate";
 
 const router: Router = Router();

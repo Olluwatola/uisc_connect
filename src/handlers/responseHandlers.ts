@@ -1,16 +1,25 @@
 import e, { Response, Request } from "express";
-import { environment, jwtCookieExpiresAfter } from "../utils/constants";
+import {
+  environment,
+  forgotPasswordJwtCookieExpiresAfter,
+  jwtCookieExpiresAfter,
+} from "../utils/constants";
 
 export const sendCookie = (
   req: Request,
   res: Response,
   token: string,
-  message?: string
+  message?: string,
+  isForgotPassword?: boolean
 ) => {
   res
     .status(201)
     .cookie("uisc_jwt_token", token, {
-      expires: new Date(Date.now() + parseInt(jwtCookieExpiresAfter as string)),
+      expires: isForgotPassword
+        ? new Date(
+            Date.now() + parseInt(forgotPasswordJwtCookieExpiresAfter as string)
+          )
+        : new Date(Date.now() + parseInt(jwtCookieExpiresAfter as string)),
       httpOnly: true,
       secure: req.secure || req.headers["x-forwarded-proto"] === "https",
     })

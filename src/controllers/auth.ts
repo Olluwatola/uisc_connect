@@ -53,7 +53,7 @@ export const changePasswordWithJwt = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { newPassword } = req.body;
 
-    User.findByIdAndUpdate(req.user.id, {
+    await User.findByIdAndUpdate(req.user.id, {
       password: await bcrypt.hash(newPassword, 12),
       passwordLastChanged: new Date(),
     });
@@ -84,7 +84,6 @@ export const submitResetCode = catchAsync(
       );
       return;
     }
-
     if (otp.code !== code) {
       send400(res, "wrong code");
       return;
@@ -108,7 +107,13 @@ export const submitResetCode = catchAsync(
 
     // Generate a JWT for password reset with custom issuer
     const token = generateUserJWT(user, null, true);
-    sendCookie(req, res, token, "proceed with attempt to submit new password");
+    sendCookie(
+      req,
+      res,
+      token,
+      "proceed with attempt to submit new password within 10 minutes",
+      true
+    );
   }
 );
 export const forgotPassword = catchAsync(
@@ -215,7 +220,8 @@ export const login = catchAsync(
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      res.status(400).json({ message: "Invalid credentials" });
+      return;
     }
 
     const token = generateUserJWT(user);

@@ -30,15 +30,22 @@ const UserSchema = new Schema<IUser>(
     lastName: { type: String, required: true },
     role: { type: String, required: true, enum: RoleType, default: RoleType.A },
     graduatedInYear: { type: Number },
-    matricNo: { type: String, required: true, unique: true },
+    matricNo: {
+      type: String,
+      //required: true,
+      unique: true,
+    },
     educationLevel: {
       type: String,
-      required: function () {
-        return !this.graduatedInYear;
-      },
+      //   required: function () {
+      //     return !this.graduatedInYear;
+      //   },
     },
     emailAddress: { type: String, required: true, unique: true },
-    yearOfAdmission: { type: Number, required: true },
+    yearOfAdmission: {
+      type: Number,
+      //required: true
+    },
     profilePicture: { type: String },
     profilePictureThumbnail: {
       type: String,

@@ -6,6 +6,7 @@ dotenv.config();
 export const portNumber: string | undefined = process.env.PORT;
 export const environment: string | undefined = process.env.ENVIRONMENT;
 export const mongoUri: string | undefined = process.env.MONGO_URI;
+export const productName: string | undefined = "UISC_Connect";
 
 //JWT CONSTANTS
 export const jwtIssuer: string | undefined = process.env.JWT_ISSUER;
@@ -15,13 +16,13 @@ export const jwtCookieExpiresAfter: string | undefined =
 export const forgotPasswordJwtCookieExpiresAfter: string | undefined =
   process.env.FORGOTPASSWORD_JWT_COOKIE_EXPIRES_AFTER;
 export const forgotPasswordJwtIssuer: string | undefined =
-  process.env.FORGOTPASSWORD_JWT_ISSUER
+  process.env.FORGOTPASSWORD_JWT_ISSUER;
 export const forgotPasswordJwtSecret: string | undefined =
-  process.env.FORGOTPASSWORD_JWT_SECRET
-  
+  process.env.FORGOTPASSWORD_JWT_SECRET;
+
 //CLOUDINARY CONSTANTS
 export const cloudinaryCloudName: string | undefined =
-  process.env.CLOUDINARY_CLOUDNAME;
+  process.env.CLOUDINARY_CLOUD_NAME;
 export const cloudinaryApiKey: string | undefined =
   process.env.CLOUDINARY_API_KEY;
 export const cloudinaryApiSecret: string | undefined =

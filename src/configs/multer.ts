@@ -82,6 +82,7 @@ export const handleImageUpload = handleMulterErrors(upload, [
     name: "images",
     maxCount: 1,
   },
+  { name: "resume", maxCount: 1 },
   {
     name: "gallery",
     maxCount: 10,

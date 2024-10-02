@@ -35,8 +35,8 @@ router.post(
   changePassword
 );
 
-router.post(
-  "/change-password",
+router.patch(
+  "/forgot-password",
   [
     body("newPassword", "Password must be at least 6 characters long").isLength(
       { min: 6 }
@@ -51,7 +51,7 @@ router.post(
 );
 
 router.post(
-  "/submit-reset-code",
+  "/forgot-password",
   [
     body("emailAddress", "emailAddress is invalid")
       .notEmpty()
@@ -94,7 +94,7 @@ router.post(
 );
 
 // POST /auth/forgot-password
-router.post(
+router.get(
   "/forgot-password",
   [
     body("emailAddress", "emailAddress is required and must be valid")

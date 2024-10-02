@@ -10,6 +10,7 @@ import {
   jwtSecret,
 } from "../utils/constants";
 import User, { IUser } from "../models/User";
+import { clearLine } from "readline";
 
 const authenticate = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -69,7 +70,9 @@ export const authenticateForgotPasswordJwt = catchAsync(
       "Bearer ",
       ""
     );
+
     if (!token) {
+      console.log("no token at all");
       send401(res, "ensure user is logged in");
       return;
     }
